@@ -1,9 +1,9 @@
 // 自機：慣性のある上下左右移動、機体の傾き、シールドと船体、砲身の熱
 import * as THREE from 'three';
 
-const MAX_SPEED = 50;
-const BOUND_X = 42;
-const BOUND_Y = 24;
+const MAX_SPEED = 78;
+const BOUND_X = 60;
+const BOUND_Y = 34;
 
 export class Player {
   constructor(g) {
@@ -29,7 +29,7 @@ export class Player {
   }
 
   steer(dt, tx, ty) {
-    const k = 1 - Math.exp(-dt * 3.4);
+    const k = 1 - Math.exp(-dt * 5.5);
     this.vel.x += (tx - this.vel.x) * k;
     this.vel.y += (ty - this.vel.y) * k;
     this.pos.x += this.vel.x * dt;
@@ -56,7 +56,7 @@ export class Player {
       return;
     }
     const m = g.input.move;
-    this.steer(dt, m.x * MAX_SPEED, m.y * MAX_SPEED * 0.8);
+    this.steer(dt, m.x * MAX_SPEED, m.y * MAX_SPEED * 0.85);
     if (g.time - this.lastDamage > 3) this.shield = Math.min(100, this.shield + 9 * dt);
     this.heat = Math.max(0, this.heat - 0.34 * dt);
     if (this.overheated && this.heat < 0.35) this.overheated = false;

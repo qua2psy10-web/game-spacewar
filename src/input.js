@@ -16,7 +16,7 @@ export class Input {
     const zone = $('stick-zone');
     const base = $('stick');
     const knob = $('stick-knob');
-    const radius = () => Math.max(46, Math.min(70, window.innerHeight * 0.15));
+    const radius = () => Math.max(40, Math.min(56, window.innerHeight * 0.12));
 
     zone.addEventListener('pointerdown', (e) => {
       if (this.stick.id !== null) return;
@@ -116,7 +116,7 @@ export class Input {
     const shape = (v) => {
       const a = Math.abs(v);
       if (a < 0.06) return 0;
-      return Math.sign(v) * Math.min(1, Math.pow((a - 0.06) / 0.94, 1.25));
+      return Math.sign(v) * Math.min(1, (a - 0.06) / 0.94);
     };
     this.move.x = shape(Math.max(-1, Math.min(1, x)));
     this.move.y = shape(Math.max(-1, Math.min(1, y)));
