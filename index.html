@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SPACEWAR">
+  <meta name="theme-color" content="#000000">
+  <title>SPACEWAR</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <canvas id="gl"></canvas>
+  <canvas id="hud"></canvas>
+
+  <div id="controls">
+    <div id="stick-zone"></div>
+    <div id="stick"><div id="stick-knob"></div></div>
+    <button id="btn-missile" class="btn-round"><span>MSL</span><b id="msl-count">4</b></button>
+    <button id="btn-fire" class="btn-round"><span>FIRE</span></button>
+  </div>
+  <button id="btn-pause" aria-label="一時停止"><i></i><i></i></button>
+
+  <div id="banner"><div id="banner-main"></div><div id="banner-sub"></div></div>
+
+  <div id="title" class="overlay hidden">
+    <div class="panel">
+      <div class="col-left">
+        <h1>SPACEWAR</h1>
+        <p class="sub">宇宙戦闘機 迎撃シューティング</p>
+        <button id="btn-start" class="primary">出撃</button>
+        <p class="hi">HI SCORE <span id="title-hi">0</span></p>
+      </div>
+      <div class="col-right">
+        <div class="setting">
+          <label>画質</label>
+          <div class="seg" data-key="quality">
+            <button data-v="auto">自動</button><button data-v="high">高</button><button data-v="medium">中</button><button data-v="low">低</button>
+          </div>
+        </div>
+        <div class="setting">
+          <label>操縦</label>
+          <div class="seg" data-key="control">
+            <button data-v="stick">スティック</button><button data-v="gyro">傾き</button>
+          </div>
+        </div>
+        <div class="setting">
+          <label>上下反転</label>
+          <div class="seg" data-key="invertY">
+            <button data-v="false">しない</button><button data-v="true">する</button>
+          </div>
+        </div>
+        <div class="setting">
+          <label>効果音</label>
+          <div class="seg" data-key="sound">
+            <button data-v="true">ON</button><button data-v="false">OFF</button>
+          </div>
+        </div>
+        <ul class="howto">
+          <li>画面の左側をなぞって上下左右に移動</li>
+          <li>FIRE で射撃（撃ち続けるとオーバーヒート）</li>
+          <li>敵を照準に重ねるとロックオン → MSL でミサイル</li>
+          <li>飛んでくるミサイルは撃ち落とすか避ける</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="pause" class="overlay hidden">
+    <div class="panel narrow">
+      <h2>一時停止</h2>
+      <button id="btn-resume" class="primary">再開</button>
+      <button id="btn-quit">タイトルへ</button>
+    </div>
+  </div>
+
+  <div id="gameover" class="overlay hidden">
+    <div class="panel narrow">
+      <h2>撃墜されました</h2>
+      <p class="result">SCORE <span id="go-score">0</span></p>
+      <p class="result small">WAVE <span id="go-wave">1</span> ／ 撃墜数 <span id="go-kills">0</span></p>
+      <p class="newhi hidden" id="go-newhi">ハイスコア更新</p>
+      <button id="btn-retry" class="primary">もう一度</button>
+      <button id="btn-totitle">タイトルへ</button>
+    </div>
+  </div>
+
+  <div id="rotate" class="overlay">
+    <div class="rotate-icon"></div>
+    <p>端末を横向きにしてください</p>
+  </div>
+
+  <div id="loading" class="overlay">
+    <p id="loading-text">起動中…</p>
+  </div>
+
+  <script>
+    // モジュールの読み込みに失敗したとき（オフラインなど）に理由を表示する
+    window.addEventListener('error', function (e) {
+      var el = document.getElementById('loading-text');
+      if (el && document.getElementById('loading').style.display !== 'none') {
+        el.textContent = '読み込みに失敗しました。通信状態を確認して再読み込みしてください。(' + (e.message || '') + ')';
+      }
+    });
+    document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+  </script>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
