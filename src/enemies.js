@@ -49,8 +49,8 @@ function buildModels(g) {
   const hull = g.tex.hull;
   const glow = g.tex.glow;
   const M = {
-    hull: new THREE.MeshStandardMaterial({ color: 0xa3a9b1, metalness: 0.35, roughness: 0.45, map: hull.map, bumpMap: hull.bump, bumpScale: 0.8 }),
-    dark: new THREE.MeshStandardMaterial({ color: 0x4a4f57, metalness: 0.3, roughness: 0.5, map: hull.map, bumpMap: hull.bump, bumpScale: 0.6 }),
+    hull: new THREE.MeshStandardMaterial({ color: 0xc8ced6, metalness: 0.3, roughness: 0.45, map: hull.map, bumpMap: hull.bump, bumpScale: 0.8, envMapIntensity: 1.8 }),
+    dark: new THREE.MeshStandardMaterial({ color: 0x70767f, metalness: 0.28, roughness: 0.5, map: hull.map, bumpMap: hull.bump, bumpScale: 0.6, envMapIntensity: 1.8 }),
     glass: new THREE.MeshStandardMaterial({ color: 0x06080c, metalness: 0.95, roughness: 0.06 }),
     red: new THREE.MeshStandardMaterial({ color: 0x8e2018, metalness: 0.4, roughness: 0.5, map: hull.map }),
     nozzle: new THREE.MeshStandardMaterial({
@@ -60,6 +60,20 @@ function buildModels(g) {
       color: 0x15171a, metalness: 0.9, roughness: 0.3, emissive: new THREE.Color(1.0, 0.45, 0.15), emissiveIntensity: 1.6, side: THREE.DoubleSide,
     }),
   };
+  // 輪郭光：暗い宇宙でも機体の縁が浮かび上がるようにする
+  const addRim = (mat, strength) => {
+    mat.onBeforeCompile = (sh) => {
+      sh.fragmentShader = sh.fragmentShader.replace(
+        '#include <opaque_fragment>',
+        `outgoingLight += vec3(0.45, 0.62, 0.95) * ${strength.toFixed(2)} * pow(1.0 - saturate(dot(normal, geometryViewDir)), 2.5);
+        #include <opaque_fragment>`
+      );
+    };
+    mat.customProgramCacheKey = () => 'rim' + strength;
+  };
+  addRim(M.hull, 0.55);
+  addRim(M.dark, 0.45);
+  addRim(M.red, 0.35);
   const mesh = (geo, mat, x = 0, y = 0, z = 0) => {
     const m = new THREE.Mesh(geo, mat);
     m.position.set(x, y, z);
